@@ -1,6 +1,6 @@
-# AirBeam 🚀
+# AirGapQR 🚀
 
-AirBeam is a web-based, fully offline tool to transfer files and text between devices using high-capacity QR codes. No internet or cables required.
+AirGapQR is a web-based, fully offline tool to transfer files and text between devices using high-capacity QR codes. No internet or cables required.
 
 ## ✨ Features
 - **Total Privacy**: All data is processed in your browser.
@@ -12,7 +12,7 @@ AirBeam is a web-based, fully offline tool to transfer files and text between de
 Run a simple local server to start (required for camera access):
 
 ```bash
-cd AirBeam
+cd AirGapQR
 python3 -m http.server 8080
 ```
 Then open `http://localhost:8080` in your browser.
@@ -23,7 +23,7 @@ Then open `http://localhost:8080` in your browser.
 3. **Finish**: Once complete, **Download** the file or **Copy** the received text.
 
 ## ⌨️ Keyboard Shortcuts & Automation
-AirBeam supports keyboard shortcuts and URL parameters for integration with tools like AutoHotKey:
+AirGapQR supports keyboard shortcuts and URL parameters for integration with tools like AutoHotKey:
 
 ### Shortcuts
 - `S` / `R`: Switch Tab
