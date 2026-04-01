@@ -336,8 +336,19 @@
                 <div class="space-y-2 px-2">
                     <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase">
                         <span>Range Selector</span>
-                        <span class="text-blue-600 font-mono"><span id="label-start">1</span> - <span
-                                id="label-end">1</span></span>
+                        <div class="flex items-center text-blue-600 font-mono">
+                            <button onclick="shiftRange('prev')" class="p-1 hover:bg-white rounded transition-colors text-slate-400 hover:text-blue-600">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3"><path d="M8 10L4 6l4-4"/></svg>
+                            </button>
+                            <input type="number" id="input-start" value="1" min="1" onchange="handleRangeInput('input-start')" 
+                                onkeydown="if(event.key==='Enter')this.blur()" class="inline-input text-right">
+                            <span class="opacity-20 px-0.5 select-none">-</span>
+                            <input type="number" id="input-end" value="1" min="1" onchange="handleRangeInput('input-end')" 
+                                onkeydown="if(event.key==='Enter')this.blur()" class="inline-input text-left">
+                            <button onclick="shiftRange('next')" class="p-1 hover:bg-white rounded transition-colors text-slate-400 hover:text-blue-600">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 10l4-4-4-4"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="dual-range">
                         <div class="slider-track"></div>
@@ -630,18 +641,54 @@
         /* Slider UI */
         function updatePlaybackRangeUI() {
             const s1 = document.getElementById('range-start-slider'), s2 = document.getElementById('range-end-slider');
+            const i1 = document.getElementById('input-start'), i2 = document.getElementById('input-end');
+            if(!s1 || !i1) return;
             s1.max = state.chunks.length; s2.max = state.chunks.length;
+            i1.max = state.chunks.length; i2.max = state.chunks.length;
             s1.value = state.rangeStart + 1; s2.value = state.rangeEnd + 1;
+            i1.value = state.rangeStart + 1; i2.value = state.rangeEnd + 1;
             updateLabelsAndTrack();
         }
         function handleRangeInput(type) {
-            let s = parseInt(document.getElementById('range-start-slider').value);
-            let e = parseInt(document.getElementById('range-end-slider').value);
-            if (type === 'start' && s > e) { document.getElementById('range-end-slider').value = s; e = s; }
-            else if (type === 'end' && e < s) { document.getElementById('range-start-slider').value = e; s = e; }
+            let s = parseInt(document.getElementById('input-start').value);
+            let e = parseInt(document.getElementById('input-end').value);
+            if (type === 'start' || type === 'end') {
+                s = parseInt(document.getElementById('range-start-slider').value);
+                e = parseInt(document.getElementById('range-end-slider').value);
+            }
+            if ((type === 'start' || type === 'input-start') && s > e) e = s;
+            if ((type === 'end' || type === 'input-end') && e < s) s = e;
+            const total = state.chunks.length || 1;
+            if (s < 1) s = 1; if (e > total) e = total;
             state.rangeStart = s - 1; state.rangeEnd = e - 1;
+            document.getElementById('input-start').value = s;
+            document.getElementById('input-end').value = e;
+            document.getElementById('range-start-slider').value = s;
+            document.getElementById('range-end-slider').value = e;
             updateLabelsAndTrack();
             if (state.frameIdx < state.rangeStart || state.frameIdx > state.rangeEnd) { state.frameIdx = state.rangeStart; renderFrame(); }
+        }
+        function shiftRange(dir) {
+            if (!state.chunks.length) return;
+            const span = (state.rangeEnd - state.rangeStart) + 1;
+            let ns, ne;
+            const total = state.chunks.length;
+            if (dir === 'next') {
+                ns = (state.rangeEnd + 1) + 1;
+                ne = ns + span - 1;
+            } else {
+                ne = (state.rangeStart + 1) - 1;
+                ns = ne - span + 1;
+            }
+            // Strict Bounds
+            if (ns < 1) ns = 1; if (ne > total) ne = total;
+            if (ns > total) { ns = total; ne = ns; }
+            if (ne < 1) { ne = 1; ns = ne; }
+            if (ns > ne) ns = ne;
+            
+            state.rangeStart = ns - 1; state.rangeEnd = ne - 1;
+            updatePlaybackRangeUI();
+            if (state.isPaused) renderFrame();
         }
         function updateLabelsAndTrack() {
             const s = state.rangeStart + 1, e = state.rangeEnd + 1, t = state.chunks.length || 1;
