@@ -17,6 +17,14 @@
     - **Defensive Preparation**: `Enter` key intelligence only triggers re-calculation when data (size/file/text) actually changes.
 - **Full Privacy**: 100% Client-side processing. No server-side storage, no tracking, just local Gzip compression and QR block-gen.
 
+## 🔗 URL Parameters (Deep Linking)
+
+AirGapQR supports URL parameters for quick workflows, allowing you to create bookmarks or standard links:
+
+- **`?mode=text`**: Directly opens the Sender in **Text Mode** and automatically focuses the text area so you can immediately `Ctrl+V` to paste.
+- **`?text=YOUR_MESSAGE`**: Automatically switches to **Text Mode** and pre-fills the input box with the provided message.
+- **`?mode=file`**: Directly opens the Sender in **File Mode**. *Note: Unlike the `F` keyboard shortcut, accessing via URL parameter will **not** automatically open the system file picker on page load. You will need to manually click the drop zone to select a file.*
+
 ## ⌨️ Pro Keyboard Shortcuts (Optimized)
 
 AirGapQR is designed for power users who prefer the keyboard.

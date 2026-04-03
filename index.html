@@ -222,8 +222,37 @@
             state.qr = new QRious({ element: document.getElementById('qrcode-canvas'), size: 400, level: 'M' });
             setEngine('fountain');
             initSliderDrag();
+            processUrlParams();
             setupHotkeys();
         };
+
+        function processUrlParams() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const mode = params.get('mode');
+                const text = params.get('text');
+
+                if (mode === 'text' || text) {
+                    switchTab('send');
+                    setSendMode('text');
+                    if (text) {
+                        try {
+                            document.getElementById('textInput').value = decodeURIComponent(text);
+                        } catch(e) {
+                            document.getElementById('textInput').value = text;
+                        }
+                        handleTextInput();
+                    } else {
+                        setTimeout(() => document.getElementById('textInput').focus(), 300);
+                    }
+                } else if (mode === 'file' || mode === 'send') {
+                    switchTab('send');
+                    setSendMode('file');
+                }
+            } catch (e) {
+                console.warn("Failed to parse URL params", e);
+            }
+        }
 
         function setEngine(mode) {
             if (state.isTransferring) resetSender();
